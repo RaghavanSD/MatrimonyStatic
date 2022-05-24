@@ -27,7 +27,8 @@ const Form = () => {
 	const { useState, useRef } = React;
 	const myRef = useRef(null);
 
-	const executeScroll = () => myRef.current.scrollIntoView();
+	const executeScroll = () =>
+		myRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
 	const [formData, setFormData] = useState(initialState);
 	const [emptyKey, setEmptyKey] = useState("");
 
