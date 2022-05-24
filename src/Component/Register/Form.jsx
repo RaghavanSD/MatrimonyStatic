@@ -24,8 +24,12 @@ const customStyles = {
 };
 
 const Form = () => {
-	const { useState } = React;
+	const { useState, useRef } = React;
+	const myRef = useRef(null);
+
+	const executeScroll = () => myRef.current.scrollIntoView();
 	const [formData, setFormData] = useState(initialState);
+	const [emptyKey, setEmptyKey] = useState("");
 
 	const onChangehandler = (target) => {
 		if (target.id === "candidateFirstMarriage") {
@@ -40,9 +44,12 @@ const Form = () => {
 		setFormData((state) => assocPath([`${id}`], value, state));
 	};
 	const isValidData = () => {
-		const emptyKey = Object.keys(formData).find(
-			(key) => formData[key] === "" || formData[key] === null,
+		setEmptyKey(
+			Object.keys(formData).find(
+				(key) => formData[key] === "" || formData[key] === null,
+			),
 		);
+		executeScroll();
 		let inCorrect = "";
 		if (emptyKey) {
 			toast.error(`${emptyKey} is mandatory field`, {
@@ -152,12 +159,13 @@ const Form = () => {
 
 				default:
 					return (
-						<InputWrapper key={i}>
+						<InputWrapper ref={m.id === emptyKey ? myRef : null} key={i}>
 							<Input
 								id={m.id}
 								placeholder={m.placeholder}
 								onChange={(e) => onChangehandler(e.target)}
 								value={formData[m.id]}
+								error={m.id === emptyKey}
 							/>
 						</InputWrapper>
 					);
@@ -233,12 +241,11 @@ const SelectWrapper = styled.div`
 const Input = styled.input`
 	height: 40px;
 	text-indent: 6px;
-	border: 1px solid #ccc;
+	/* border: 1px solid #ccc; */
 	cursor: auto;
 	border-radius: 5px;
 	width: 75%;
-	font-size: 16px;
-	border: ${(props) => props.error && "1px solid red"};
+	border: ${({ error }) => (error ? "1px solid red" : "1px solid #ccc")};
 	&:focus {
 		border: 1px solid #2684ff;
 	}
